@@ -29,7 +29,10 @@ public class Discovery extends AppCompatActivity {
     protected ArrayList<String> foundDevices;
     private ListView foundDevicesListView;
     private ArrayAdapter<String> btArrayAdapter;
-    HashMap<String,String> mapA,mapB;
+    private ArrayList<String> foundA;
+    private ArrayList<String> foundB;
+
+
     /**
      * Called when the activity is first created.
      */
@@ -39,7 +42,8 @@ public class Discovery extends AppCompatActivity {
         setContentView(R.layout.activity_discovery);
         final BluetoothAdapter myBlueToothAdapter = BluetoothAdapter.getDefaultAdapter();
         foundDevices = new ArrayList<String>();
-        mapA=new HashMap<String, String>();
+        foundA = new ArrayList<String>();
+        foundB = new ArrayList<String>();
         final Button scanb = (Button) findViewById(R.id.button_id);
         final ListView foundDevicesListView = (ListView) findViewById(R.id.mobile_list);
 
@@ -76,7 +80,7 @@ public class Discovery extends AppCompatActivity {
         scanb.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
 //                btArrayAdapter.clear();
-                mapB=new HashMap<String,String>();
+                foundB=new ArrayList<>();
                 myBlueToothAdapter.startDiscovery();
                 Toast.makeText(Discovery.this, "Scanning Devices", Toast.LENGTH_LONG).show();
 
@@ -108,13 +112,13 @@ public class Discovery extends AppCompatActivity {
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-//                if(!mapA.containsKey(device.getName())){
+                if(!foundA.contains(device.getName())){
                     Date date =new Date();
-                    mapB.put(device.getName(),date+"");
                     Log.d("Sanjay",date+"");
-                    foundDevices.add(device.getName()+" "+mapB.get(device.getName()));
+                    foundB.add(device.getName());
+                    foundDevices.add(device.getName()+" "+date);
                     btArrayAdapter.notifyDataSetChanged();
-//                }
+                }
 
             }
 
@@ -123,28 +127,25 @@ public class Discovery extends AppCompatActivity {
                 Toast.makeText(Discovery.this, "Scan Complete", Toast.LENGTH_LONG).show();
                 if (foundDevices == null || foundDevices.isEmpty()) {
                     Toast.makeText(Discovery.this, "No Devices", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    for (String i : mapB.keySet()) {
-                        Log.d("Sanjay", "mapB: " + i + ", " + mapB.get(i));
-                        if (!mapA.containsKey(i)) {
-                            mapA.put(i, mapB.get(i));
+                }else{
+                    for(String a:foundB){
+                        foundA.add(a);
+                    }
+                    ArrayList<String> remove_ele =new ArrayList<>();
+                    for(String a: foundA){
+                        if(!foundB.contains(a)){
+                            Date date= new Date();
+                            foundDevices.add(a+"   OUT");
+                            btArrayAdapter.notifyDataSetChanged();
+                            remove_ele.add(a);
                         }
                     }
-                    Set<String> set = mapA.keySet();
-                    for (String i : set) {
-                        Log.d("Sanjay", "mapA: " + i + ", " + mapA.get(i));
-                        if (!mapB.containsKey(i)) {
-                            Date date = new Date();
-//                            Log.d("Sanjay", i);
-                            foundDevices.add(i + " OUT " + date + "");
-                            btArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, foundDevices);
 
-                            foundDevicesListView.setAdapter(btArrayAdapter);
-                            mapA.remove(i);
-                        }
+                    for(int i=0;i<remove_ele.size();i++){
+                        foundA.remove(remove_ele.get(i));
                     }
                 }
+
             }
 
         }
