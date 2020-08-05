@@ -106,10 +106,8 @@ public class Discovery extends AppCompatActivity {
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                if (!foundDevices.contains(device)) {
-                    String device_name= device.getName();
-                    Date date = new Date();
-                    foundDevices.add(device_name+" "+date.toString() );
+                if (!foundDevices.contains(device.getName())) {
+                    foundDevices.add(device.getName());
                     btArrayAdapter.notifyDataSetChanged();
                 }
             }
