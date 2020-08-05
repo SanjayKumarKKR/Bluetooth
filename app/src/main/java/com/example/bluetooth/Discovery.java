@@ -23,7 +23,7 @@ import java.util.Date;
 
 public class Discovery extends AppCompatActivity {
     //private final BroadcastReceiver FoundReceiver = null;
-    protected ArrayList<String> foundDevices = new ArrayList<String>();
+    protected ArrayList<String> foundDevices;
     private ListView foundDevicesListView;
     private ArrayAdapter<String> btArrayAdapter;
 
@@ -35,7 +35,7 @@ public class Discovery extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discovery);
         final BluetoothAdapter myBlueToothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        foundDevices = new ArrayList<String>();
         final Button scanb = (Button) findViewById(R.id.button_id);
         final ListView foundDevicesListView = (ListView) findViewById(R.id.mobile_list);
 
