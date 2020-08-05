@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -20,13 +21,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Discovery extends AppCompatActivity {
     //private final BroadcastReceiver FoundReceiver = null;
     protected ArrayList<String> foundDevices;
     private ListView foundDevicesListView;
     private ArrayAdapter<String> btArrayAdapter;
-
+    HashMap<String,String> map;
     /**
      * Called when the activity is first created.
      */
@@ -36,6 +38,7 @@ public class Discovery extends AppCompatActivity {
         setContentView(R.layout.activity_discovery);
         final BluetoothAdapter myBlueToothAdapter = BluetoothAdapter.getDefaultAdapter();
         foundDevices = new ArrayList<String>();
+        map=new HashMap<String, String>();
         final Button scanb = (Button) findViewById(R.id.button_id);
         final ListView foundDevicesListView = (ListView) findViewById(R.id.mobile_list);
 
@@ -71,10 +74,8 @@ public class Discovery extends AppCompatActivity {
 
         scanb.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                btArrayAdapter.clear();
-
+//                btArrayAdapter.clear();
                 myBlueToothAdapter.startDiscovery();
-
                 Toast.makeText(Discovery.this, "Scanning Devices", Toast.LENGTH_LONG).show();
 
             }
@@ -84,7 +85,6 @@ public class Discovery extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(FoundReceiver, filter);
-
     }
 
     @Override
@@ -106,10 +106,14 @@ public class Discovery extends AppCompatActivity {
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                if (!foundDevices.contains(device.getName())) {
-                    foundDevices.add(device.getName());
+                if(!map.containsKey(device.getName())){
+                    Date date =new Date();
+                    map.put(device.getName(),date+"");
+                    Log.d("Sanjay",date+"");
+                    foundDevices.add(device.getName()+" "+map.get(device.getName()));
                     btArrayAdapter.notifyDataSetChanged();
                 }
+
             }
 
             // When discovery cycle finished
