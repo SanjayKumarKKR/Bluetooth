@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Discovery extends AppCompatActivity {
     //private final BroadcastReceiver FoundReceiver = null;
@@ -119,21 +120,27 @@ public class Discovery extends AppCompatActivity {
 
             // When discovery cycle finished
             if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Toast.makeText(Discovery.this, "Scan Complete", Toast.LENGTH_LONG).show();
                 if (foundDevices == null || foundDevices.isEmpty()) {
                     Toast.makeText(Discovery.this, "No Devices", Toast.LENGTH_LONG).show();
                 }
-                else{
-                    for( String i: mapB.keySet()){
-                        if(!mapA.containsKey(i)){
-                            mapA.put(i,mapB.get(i));
+                else {
+                    for (String i : mapB.keySet()) {
+                        Log.d("Sanjay", "mapB: " + i + ", " + mapB.get(i));
+                        if (!mapA.containsKey(i)) {
+                            mapA.put(i, mapB.get(i));
                         }
                     }
-
-                    for (String i: mapA.keySet()){
-                        if(!mapB.containsKey(i)){
-                            Date date =new Date();
+                    Set<String> set = mapA.keySet();
+                    for (String i : set) {
+                        Log.d("Sanjay", "mapA: " + i + ", " + mapA.get(i));
+                        if (!mapB.containsKey(i)) {
+                            Date date = new Date();
 //                            Log.d("Sanjay", i);
-                            foundDevices.add(i+" out "+date+"");
+                            foundDevices.add(i + " OUT " + date + "");
+                            btArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, foundDevices);
+
+                            foundDevicesListView.setAdapter(btArrayAdapter);
                             mapA.remove(i);
                         }
                     }
